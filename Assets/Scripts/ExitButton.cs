@@ -11,6 +11,7 @@ public class ExitButton : MonoBehaviour
 
     public void ExitGame()
     {
+        //Different behaviour between Dev and exe
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
