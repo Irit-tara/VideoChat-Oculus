@@ -8,6 +8,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using WebSocketSharp;
 
+using UnityEngine.Events;
+using UnityEditor.Presets;
+
 public class VideoChatMediaStream : MonoBehaviour
 {
 
@@ -29,8 +32,12 @@ public class VideoChatMediaStream : MonoBehaviour
 
     public AudioSource audioSource;
     private AudioStreamTrack audioStreamTrack;
-    LogManager logManager; 
+    LogManager logManager;
 
+    public GameObject button;
+    public UnityEvent onPress;
+    GameObject presser;
+    bool isBtnPressed;
     private void Awake()
     {
         WebRTC.Initialize();
@@ -380,6 +387,26 @@ public class VideoChatMediaStream : MonoBehaviour
         if (audioStreamTrack != null)
         {
             audioStreamTrack.Enabled = enable;  // Enable or disable the audio stream track
+        }
+    }
+
+    // VR Events
+    private void OnTriggerEnter(Collider other)
+    {
+        if (! isBtnPressed)
+        {
+            button.transform.localPosition = new Vector3(0, 0.003f, 0);
+            presser = other.gameObject;
+            isBtnPressed = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject == presser)
+        {
+            button.transform.localPosition = new Vector3(0, 0.015f, 0);
+            isBtnPressed=false;
+            call();
         }
     }
 }
