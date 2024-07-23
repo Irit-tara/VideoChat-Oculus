@@ -16,8 +16,9 @@ public class VideoChatMediaStream : MonoBehaviour
 
     [SerializeField] private string clientId;
     [SerializeField] private Camera cameraStream;
-    [SerializeField] private RawImage sourceImage;
-    [SerializeField] private List<RawImage> receiveImages = new List<RawImage>();
+    // [SerializeField] private RawImage sourceImage;
+    [SerializeField] private GameObject displayQuad;
+    [SerializeField] private List<GameObject> receiveImages = new List<GameObject>();
 
     private Dictionary<string, RTCPeerConnection> pcs = new Dictionary<string, RTCPeerConnection>();
     private VideoStreamTrack videoStreamTrack ;
@@ -189,9 +190,9 @@ public class VideoChatMediaStream : MonoBehaviour
             Debug.Log("Connection closed: " + e.Reason);
         };
         videoStreamTrack = cameraStream.CaptureStreamTrack(1280, 720);
-        sourceImage.texture = cameraStream.targetTexture;
+        //sourceImage.texture = cameraStream.targetTexture;
+        displayQuad.GetComponent<Renderer>().material.mainTexture = cameraStream.targetTexture;
 
-     
         // Start microphone and assign it to AudioSource
         if (Microphone.devices.Length > 0)
          {
@@ -211,7 +212,7 @@ public class VideoChatMediaStream : MonoBehaviour
         if (!ws.IsAlive)  // Check if the connection is not established
         {
             Debug.Log("Connection attempt timed out.");
-            ShowErrorToUser("Failed to connect to the server.");
+            ShowErrorToUser("Failed to connect to the server.Connection attempt timed out.");
             ws.Close();  // Ensure the connection is closed properly
         }else
         {
@@ -266,7 +267,9 @@ public class VideoChatMediaStream : MonoBehaviour
                 track.OnVideoReceived += tex =>
                 {
                     logManager.AddMessage("recieveing Image");
-                    receiveImages[receiveImageCounter].texture = tex;
+                   // displayQuad.GetComponent<Renderer>().material.mainTexture = tex;
+                    //receiveImages[receiveImageCounter].texture = tex;
+                    receiveImages[receiveImageCounter].GetComponent<Renderer>().material.mainTexture = tex;
                     receiveImageCounter++;
                 };
             }
@@ -357,10 +360,18 @@ public class VideoChatMediaStream : MonoBehaviour
     {
         string ipNPort = InputServerIP.serverIP;
         if (ipNPort == "" || ipNPort == null)
+        {
             ShowErrorToUser("Please enter IP address and port (ex:127.0.0.1:80)");
+            return;
+        }
+            
         string[] ppp = ipNPort.Split(":");
         if (ppp.Length != 2)
+        {
             ShowErrorToUser("IP and port not in valid format (ex:127.0.0.1:80)");
+            return;
+        }
+            
         InitClient(ppp[0], Int32.Parse(ppp[1]));
     }
 

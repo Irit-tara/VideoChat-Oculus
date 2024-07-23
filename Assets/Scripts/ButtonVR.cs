@@ -1,47 +1,67 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering;
 
 public class ButtonVR : MonoBehaviour
 {
-    public GameObject button;
+    [SerializeField] private float threshold = .1f;
+    [SerializeField] private float deadzone = .025f;
     public UnityEvent onPress;
     public UnityEvent onRelease;
-    GameObject presser;
-    bool ispressed;
+   
+    bool _ispressed;
+    private Vector3 _startPosition;
+    private ConfigurableJoint _joint;
 
     // Start is called before the first frame update
     void Start()
     {
-        ispressed = false;
+        _ispressed = false;
+        _startPosition = transform.localPosition;
+        _joint = GetComponent<ConfigurableJoint>();
 
     }
 
-    private void OnTriggerEnter(Collider other)
+     void Update()
     {
-        if (!ispressed)
+        if (!_ispressed && GetValue() + threshold >= 1)
         {
-            button.transform.localPosition = new Vector3(0, 0.003f, 0);
+            Pressed();
+        }
+        if (_ispressed && GetValue() - threshold <= 1)
+        {
+            Rleased();
+        }
+         /*   button.transform.localPosition = new Vector3(0, 0.003f, 0);
             presser = other.gameObject;
             onPress.Invoke();
-            ispressed = true;
-        }
+            _ispressed = true;
+        }*/
     }
-    private void OnTriggerExit(Collider other)
+    private float GetValue()
     {
-        if (other.gameObject == presser)
-        {
-            button.transform.localPosition = new Vector3(0, 0.015f, 0);
-            onRelease.Invoke();
-            ispressed=false;
-        }
-    }
+        var value = Vector3.Distance(_startPosition, transform.localPosition) / _joint.linearLimit.limit;
+        if (Math.Abs(value) < deadzone)
+            value = 0;
 
-    public void connectedToServer()
+        return Mathf.Clamp(value, deadzone - 1f, 1f);
+    }
+  
+
+    public void Pressed()
     {
+        _ispressed = true;
         Debug.Log("Connect To Server");
 
+    }
+    private void Rleased()
+    {
+        _ispressed = false;
+        onRelease.Invoke();
+        Debug.Log("Rleased");
     }
 
 

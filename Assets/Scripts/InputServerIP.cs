@@ -16,11 +16,12 @@ public class InputServerIP : MonoBehaviour
 
     public void SetServerIP(string txt)
     {
-        _serverIP = txt;
+        _serverIP = input.text;
     }
     public string GetIP()
     {
-        return _serverIP;
+        return input.text;
+        //return _serverIP;
     }
    
 }
