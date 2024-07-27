@@ -15,8 +15,8 @@ public class LogManager : MonoBehaviour
     public void AddMessage(string message)
     {
         logText.text += message + "\n"; // Append new message
-        StopCoroutine("HideLog"); // Stop previous timer
-        StartCoroutine("HideLog"); // Start a new timeout timer
+       // StopCoroutine("HideLog"); // Stop previous timer
+       // StartCoroutine("HideLog"); // Start a new timeout timer
         logText.gameObject.SetActive(true); // Ensure the text box is visible
     }
 

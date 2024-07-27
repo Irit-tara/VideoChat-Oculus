@@ -347,6 +347,7 @@ public class VideoChatMediaStream : MonoBehaviour
             //only add tracks for sending connections - first number is client ID
             if (connection.Key.Substring(0,1) == clientId)
             {
+                logManager.AddMessage($"Starting call with client ID : {clientId}");
                 connection.Value.AddTrack(videoStreamTrack);
                 if (audioStreamTrack != null)
                 {
@@ -401,7 +402,7 @@ public class VideoChatMediaStream : MonoBehaviour
         }
     }
 
-    // VR Events
+  /*  // VR Events
     private void OnTriggerEnter(Collider other)
     {
         if (! isBtnPressed)
@@ -419,5 +420,5 @@ public class VideoChatMediaStream : MonoBehaviour
             isBtnPressed=false;
             call();
         }
-    }
+    }*/
 }
